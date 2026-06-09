@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>論文の読み方 スターターガイド</title>
+<style>
+  :root {
+    --color-bg:      #D6D1C2;
+    --color-dark:    #1C3530;
+    --color-accent1: #4E7868;
+    --color-accent2: #3A6E5E;
+    --color-accent3: #286858;
+    --color-accent4: #1E6068;
+    --color-accent5: #1C5A72;
+    --color-accent6: #196E96;
+    --color-warning: #B86018;
+    --color-white:   #FFFFFF;
+    --border-ui:     color-mix(in srgb, var(--color-dark) 18%, var(--color-white));
+    --text-muted:    color-mix(in srgb, var(--color-dark) 75%, var(--color-bg));
+    --text-subtle:   color-mix(in srgb, var(--color-dark) 58%, var(--color-bg));
+    --shadow-paper:  0 10px 28px color-mix(in srgb, var(--color-dark) 22%, transparent);
+    --shadow-card:   0 4px 16px color-mix(in srgb, var(--color-dark) 16%, transparent);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  *:focus-visible{outline:2px solid var(--color-accent6);outline-offset:2px;}
+
+  body{
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+    color:var(--color-dark);
+    background:var(--color-bg);
+    line-height:1.75;
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+
+  /* ---------- Background scene ---------- */
+  .scene{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  }
+  .scene__plane--a{
+    position:absolute;
+    width:min(130vw,900px);height:46vh;
+    top:-8%;left:-20%;
+    background:color-mix(in srgb,var(--color-accent1) 22%,var(--color-bg));
+    transform:rotate(-4deg);
+  }
+  .scene__plane--b{
+    position:absolute;
+    width:54vw;max-width:26rem;height:min(70vh,500px);
+    bottom:-14%;right:-16%;
+    background:color-mix(in srgb,var(--color-dark) 14%,var(--color-bg));
+    transform:rotate(5deg);border-radius:0 0 0 18%;
+  }
+  .scene__band{
+    position:absolute;top:0;left:0;right:0;height:4px;
+    background:var(--color-accent6);
+  }
+
+  /* ---------- Header ---------- */
+  .hero{
+    background:var(--color-dark);
+    color:var(--color-white);
+    padding:40px 24px 36px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,
+      color-mix(in srgb,var(--color-accent3) 40%,var(--color-dark)) 0%,
+      var(--color-dark) 60%
+    );
+    opacity:.7;
+  }
+  .hero>*{position:relative;z-index:1;}
+  .hero h1{margin:0 0 10px;font-size:1.75rem;letter-spacing:.02em;font-weight:800;line-height:1.2;}
+  .hero p{margin:0;opacity:.9;font-size:.95rem;}
+  .hero .sub{
+    margin-top:14px;font-size:.8rem;
+    opacity:.7;
+    letter-spacing:.02em;
+  }
+  .hero .eyebrow{
+    display:block;margin-bottom:10px;
+    font-size:.65rem;font-weight:600;letter-spacing:.18em;
+    color:color-mix(in srgb,var(--color-white) 65%,var(--color-accent6));
+    text-transform:uppercase;
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 80px;position:relative;z-index:0;}
+
+  /* ---------- TOC ---------- */
+  nav.toc{
+    background:var(--color-white);
+    border-radius:12px;
+    box-shadow:var(--shadow-paper);
+    padding:0;
+    margin:-20px auto 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  .toc__head{
+    background:var(--color-dark);
+    color:var(--color-white);
+    padding:10px 16px;
+    font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  }
+  nav.toc ol{
+    margin:0;padding:14px 16px 16px;
+    list-style:none;display:flex;flex-wrap:wrap;gap:7px;
+  }
+  nav.toc a{
+    display:inline-block;text-decoration:none;
+    background:color-mix(in srgb,var(--color-accent2) 10%,var(--color-white));
+    color:var(--color-accent2);
+    border:1px solid color-mix(in srgb,var(--color-accent2) 22%,var(--color-white));
+    padding:5px 12px;border-radius:999px;font-size:.82rem;transition:all .15s;
+  }
+  nav.toc a:hover{
+    background:var(--color-dark);color:var(--color-white);border-color:var(--color-dark);
+  }
+
+  /* ---------- Section ---------- */
+  section{margin-bottom:32px;scroll-margin-top:20px;}
+  h2.sec{
+    font-size:1.2rem;font-weight:800;
+    color:var(--color-dark);
+    border-left:5px solid var(--color-accent5);
+    padding-left:12px;
+    margin:0 0 14px;
+    letter-spacing:.02em;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--color-white);
+    border-radius:12px;
+    box-shadow:var(--shadow-card);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .card-body{padding:16px 20px;}
+
+  /* ---------- 心得 ---------- */
+  .creed{counter-reset:creed;list-style:none;padding:0;margin:0;}
+  .creed li{
+    position:relative;
+    background:color-mix(in srgb,var(--color-warning) 8%,var(--color-white));
+    border-left:4px solid var(--color-warning);
+    border-radius:0 10px 10px 0;
+    padding:12px 14px 12px 50px;
+    margin-bottom:9px;
+  }
+  .creed li::before{
+    counter-increment:creed;
+    content:counter(creed);
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    width:24px;height:24px;border-radius:50%;
+    background:var(--color-warning);color:var(--color-white);font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-size:.85rem;
+  }
+
+  /* ---------- 読む順番フロー ---------- */
+  .flow{list-style:none;margin:0;padding:0;counter-reset:flow;}
+  .flow li{
+    position:relative;
+    padding:11px 14px 11px 54px;
+    margin-bottom:5px;border-radius:9px;
+    background:color-mix(in srgb,var(--color-accent1) 10%,var(--color-white));
+    border:1px solid color-mix(in srgb,var(--color-accent1) 20%,var(--color-white));
+  }
+  .flow li::before{
+    counter-increment:flow;content:counter(flow);
+    position:absolute;left:13px;top:13px;
+    width:26px;height:26px;border-radius:50%;
+    background:var(--color-dark);color:var(--color-white);font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-size:.85rem;
+  }
+  .flow li::after{
+    content:"";position:absolute;left:25px;top:39px;bottom:-5px;width:2px;
+    background:color-mix(in srgb,var(--color-dark) 18%,var(--color-white));
+  }
+  .flow li:last-child::after{display:none;}
+  .flow strong{color:var(--color-dark);}
+  .flow .time{color:var(--text-muted);font-size:.83rem;}
+
+  /* ---------- Step cards ---------- */
+  .step{border:none;}
+  .step-card-head{
+    background:var(--color-dark);
+    color:var(--color-white);
+    padding:12px 18px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .step.most .step-card-head{
+    background:linear-gradient(90deg,
+      color-mix(in srgb,var(--color-warning) 80%,var(--color-dark)) 0%,
+      var(--color-dark) 100%
+    );
+  }
+  .step-badge{
+    background:color-mix(in srgb,var(--color-white) 18%,transparent);
+    color:var(--color-white);font-weight:700;font-size:.73rem;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;
+    border:1px solid color-mix(in srgb,var(--color-white) 30%,transparent);
+  }
+  .step-card-head h3{margin:0;font-size:1rem;color:var(--color-white);font-weight:700;}
+  .tag-most{
+    background:color-mix(in srgb,var(--color-warning) 20%,transparent);
+    color:color-mix(in srgb,var(--color-warning) 80%,var(--color-white));
+    font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:5px;
+    border:1px solid color-mix(in srgb,var(--color-warning) 40%,transparent);
+    white-space:nowrap;
+  }
+  .step .card-body{padding:16px 18px;}
+  .block-label{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:.8rem;font-weight:700;color:var(--color-accent4);
+    margin:13px 0 6px;
+  }
+  .block-label .ico{font-size:.95rem;}
+
+  /* ---------- Tables ---------- */
+  table{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:.88rem;}
+  th,td{border:1px solid var(--border-ui);padding:8px 10px;text-align:left;vertical-align:top;}
+  th{
+    background:var(--color-dark);color:var(--color-white);
+    font-weight:700;font-size:.8rem;letter-spacing:.02em;
+  }
+  tr:nth-child(even) td{
+    background:color-mix(in srgb,var(--color-accent1) 5%,var(--color-white));
+  }
+  td .kw{display:inline-block;margin:2px 2px 2px 0;}
+
+  /* ---------- check list ---------- */
+  ul.todo{list-style:none;padding:0;margin:6px 0;}
+  ul.todo li{
+    padding:8px 12px;
+    border:1px solid var(--border-ui);border-radius:8px;margin-bottom:5px;
+    cursor:pointer;display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px;
+    background:var(--color-white);transition:.15s;
+  }
+  ul.todo li .kw{margin:0;vertical-align:middle;}
+  ul.todo li .box{
+    flex:0 0 auto;width:19px;height:19px;
+    border:2px solid var(--color-accent4);border-radius:4px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.75rem;color:var(--color-white);margin-top:2px;
+  }
+  ul.todo li.done{
+    background:color-mix(in srgb,var(--color-accent1) 8%,var(--color-white));
+    text-decoration:line-through;color:var(--text-muted);
+  }
+  ul.todo li.done .box{background:var(--color-accent3);border-color:var(--color-accent3);}
+
+  /* ---------- keyword copy tags ---------- */
+  .kw-wrap{margin:4px 0;}
+  .kw-note{font-size:.8rem;color:var(--text-muted);margin:0 0 6px;}
+  .kw{
+    display:inline-block;font-family:"SFMono-Regular",Consolas,Menlo,monospace;
+    background:color-mix(in srgb,var(--color-dark) 72%,var(--color-bg));
+    color:color-mix(in srgb,var(--color-accent6) 55%,var(--color-bg));
+    border:none;border-radius:5px;
+    padding:3px 9px;margin:3px 4px 3px 0;font-size:.78rem;cursor:pointer;transition:.15s;
+  }
+  .kw:hover{background:var(--color-accent4);color:var(--color-white);}
+  .kw.copied{background:var(--color-accent2);color:var(--color-white);}
+  .kw::before{content:"⧉ ";opacity:.5;}
+
+  /* ---------- code box ---------- */
+  pre{
+    background:color-mix(in srgb,var(--color-dark) 80%,var(--color-bg));
+    color:color-mix(in srgb,var(--color-bg) 55%,var(--color-accent6));
+    border-radius:10px;padding:14px 16px;
+    overflow:auto;font-size:.83rem;line-height:1.65;margin:8px 0;
+    border:1px solid color-mix(in srgb,var(--color-white) 8%,var(--color-dark));
+  }
+
+  /* ---------- search box ---------- */
+  .search{
+    width:100%;padding:9px 14px;
+    border:1px solid var(--border-ui);border-radius:8px;
+    font-size:.92rem;margin-bottom:12px;outline:none;
+    font-family:inherit;color:var(--color-dark);background:var(--color-white);
+    transition:border-color .15s;
+  }
+  .search:focus{
+    border-color:var(--color-accent6);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent6) 15%,transparent);
+  }
+  .sub-h{
+    font-size:.88rem;font-weight:700;
+    color:var(--color-accent5);
+    margin:18px 0 6px;
+    letter-spacing:.04em;text-transform:uppercase;
+    border-bottom:1px solid var(--border-ui);padding-bottom:4px;
+  }
+  tr.hide{display:none;}
+
+  /* ---------- muted text ---------- */
+  .muted{color:var(--text-muted);font-size:.88rem;}
+
+  /* ---------- back to top ---------- */
+  #top-btn{
+    position:fixed;right:18px;bottom:18px;z-index:50;
+    background:var(--color-dark);color:var(--color-white);
+    border:none;border-radius:50%;
+    width:44px;height:44px;font-size:1.1rem;cursor:pointer;
+    box-shadow:var(--shadow-paper);
+    opacity:0;pointer-events:none;transition:.2s;
+  }
+  #top-btn.show{opacity:1;pointer-events:auto;}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);
+    background:var(--color-dark);color:var(--color-white);
+    padding:8px 18px;border-radius:999px;font-size:.82rem;
+    opacity:0;transition:.25s;pointer-events:none;z-index:100;
+    border:1px solid color-mix(in srgb,var(--color-white) 15%,var(--color-dark));
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media(max-width:600px){
+    .hero h1{font-size:1.4rem;}
+    body{font-size:14px;}
+    .step .card-body,.card-body{padding:14px 15px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" aria-hidden="true">
+  <div class="scene__band"></div>
+  <div class="scene__plane--a"></div>
+  <div class="scene__plane--b"></div>
+</div>
+
+<header class="hero">
+  <span class="eyebrow">Research Vault ／ Journal Club</span>
+  <h1>論文の読み方 スターターガイド</h1>
+  <p>初めて論文を読む人が「どの順番で・何を見て・何を検索すればよいか」を一望できる簡易版</p>
+  <div class="sub">ジャーナルクラブ準備用 ／ 詳細仕様は「ジャーナルクラブ_発表者ガイド」を参照</div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <div class="toc__head">もくじ（タップで移動）</div>
+    <ol>
+      <li><a href="#order">読む順番</a></li>
+      <li><a href="#step1">Step1 背景・PICO</a></li>
+      <li><a href="#step2">Step2 デザイン</a></li>
+      <li><a href="#step3">Step3 批判的吟味 ★</a></li>
+      <li><a href="#step4">Step4 臨床適用</a></li>
+      <li><a href="#step5">Step5 まとめ</a></li>
+      <li><a href="#keywords">用語早見表</a></li>
+      <li><a href="#checklist">最終チェック</a></li>
+    </ol>
+  </nav>
+
+  <!-- 読む順番 -->
+  <section id="order">
+    <h2 class="sec">読む順番（おすすめ）</h2>
+    <div class="card">
+      <div class="card-body">
+        <p class="muted">論文は <strong>頭から順に読まない</strong>。次の順番が効率的です。クリックでキーワードをコピーできます。</p>
+        <ol class="flow">
+          <li><strong>Title / Abstract</strong> … 何の論文か全体像をつかむ <span class="time">（5分）</span> <button class="kw">Abstract</button></li>
+          <li><strong>Introduction の最後</strong> … Research Question（何を問うた研究か）を確認 <button class="kw">objective</button><button class="kw">aim</button><button class="kw">hypothesis</button></li>
+          <li><strong>Methods の図（Figure 1 / フローチャート）</strong> … 誰を・何群に・どう分けたか <button class="kw">Figure 1</button></li>
+          <li><strong>Table 1</strong> … 患者背景（2群が似ているか） <button class="kw">Table 1</button></li>
+          <li><strong>Results の主要アウトカム</strong> … 一番大事な結果の数字 <button class="kw">primary outcome</button><button class="kw">primary endpoint</button></li>
+          <li><strong>Methods 本文に戻る</strong> … 結果が信頼できるか確かめる <button class="kw">Methods</button></li>
+          <li><strong>Discussion / Limitations</strong> … 著者の解釈と限界 <button class="kw">Discussion</button><button class="kw">Limitations</button></li>
+          <li><strong>もう一度 Abstract</strong> … 最初の印象と変わったかを確認</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step1 -->
+  <section id="step1">
+    <div class="card step">
+      <div class="step-card-head">
+        <span class="step-badge">STEP 1</span>
+        <h3>この論文は何を問うているか（背景・PICO）</h3>
+      </div>
+      <div class="card-body">
+        <div class="block-label"><span class="ico">✅</span>やること</div>
+        <ul>
+          <li>Introductionから「わかっていること」「わかっていないこと」「この研究の問い」を1文ずつ抜き出す。 <button class="kw">objective</button><button class="kw">aim</button><button class="kw">hypothesis</button><button class="kw">we hypothesized</button></li>
+          <li>PICOを表に埋める。 <button class="kw">inclusion criteria</button><button class="kw">exclusion criteria</button><button class="kw">eligible</button></li>
+          <li>優越性試験か非劣性試験かを確認する。 <button class="kw">non-inferiority</button><button class="kw">superiority</button></li>
+        </ul>
+        <table>
+          <thead><tr><th>要素</th><th>意味</th><th>自分の言葉で</th><th>検索キーワード（Ctrl+F）</th></tr></thead>
+          <tbody>
+            <tr><td><strong>P</strong> (Patient)</td><td>どんな患者か</td><td></td><td><button class="kw">inclusion criteria</button><button class="kw">exclusion criteria</button><button class="kw">eligible</button><button class="kw">enrolled</button><button class="kw">participants</button></td></tr>
+            <tr><td><strong>I</strong> (Intervention)</td><td>何をするか</td><td></td><td><button class="kw">assigned to</button><button class="kw">received</button><button class="kw">intervention</button><button class="kw">administered</button></td></tr>
+            <tr><td><strong>C</strong> (Comparison)</td><td>何と比べるか</td><td></td><td><button class="kw">placebo</button><button class="kw">control</button><button class="kw">usual care</button><button class="kw">compared with</button></td></tr>
+            <tr><td><strong>O</strong> (Outcome)</td><td>何が変わるか</td><td></td><td><button class="kw">primary outcome</button><button class="kw">primary endpoint</button><button class="kw">we defined</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step2 -->
+  <section id="step2">
+    <div class="card step">
+      <div class="step-card-head">
+        <span class="step-badge">STEP 2</span>
+        <h3>どうやって調べたか（研究デザイン・Methods）</h3>
+      </div>
+      <div class="card-body">
+        <div class="block-label"><span class="ico">🔍</span>チェックの目安</div>
+        <ul class="todo">
+          <li><span class="box"></span>ランダムに割り付けているか <button class="kw">randomly assigned</button><button class="kw">randomization</button><button class="kw">allocation concealment</button></li>
+          <li><span class="box"></span>誰が（患者・医師・評価者）盲検化されているか <button class="kw">double-blind</button><button class="kw">single-blind</button><button class="kw">open-label</button><button class="kw">masking</button><button class="kw">blinded</button></li>
+          <li><span class="box"></span>主要アウトカムは1つに決まっているか <button class="kw">primary outcome</button><button class="kw">primary endpoint</button><button class="kw">co-primary</button></li>
+          <li><span class="box"></span>追跡期間は十分か <button class="kw">follow-up</button><button class="kw">median follow-up</button><button class="kw">duration</button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step3 -->
+  <section id="step3">
+    <div class="card step most">
+      <div class="step-card-head">
+        <span class="step-badge">STEP 3</span>
+        <h3>結果は信頼できるか（批判的吟味）</h3>
+        <span class="tag-most">★ 最重要</span>
+      </div>
+      <div class="card-body">
+        <div class="block-label"><span class="ico">✅</span>やること（RCTの6つの問い）</div>
+        <p class="muted">各項目に「はい / いいえ / 部分的」で答え、理由を一言つける。</p>
+        <ul class="todo">
+          <li><span class="box"></span>ランダム割付けされているか <button class="kw">randomly assigned</button><button class="kw">randomization</button></li>
+          <li><span class="box"></span>2群の背景（Table 1）は似ているか <button class="kw">Table 1</button><button class="kw">baseline</button></li>
+          <li><span class="box"></span>脱落者を含め全員の結果が反映されているか（ITT） <button class="kw">intention-to-treat</button><button class="kw">lost to follow-up</button><button class="kw">discontinued</button></li>
+          <li><span class="box"></span>盲検化されているか <button class="kw">double-blind</button><button class="kw">open-label</button><button class="kw">masking</button><button class="kw">blinded</button></li>
+          <li><span class="box"></span>症例数は十分か（サンプルサイズ設計） <button class="kw">sample size</button><button class="kw">power</button></li>
+          <li><span class="box"></span>結果をどう解釈するか（↓の数字を見る） <button class="kw">primary outcome</button><button class="kw">secondary outcome</button><button class="kw">composite</button><button class="kw">adverse event</button></li>
+        </ul>
+        <div class="block-label"><span class="ico">🔢</span>主要結果の数字の見方</div>
+        <p class="muted">論文の結果は、まず次の「型」に当てはめて書き出すと整理できる。</p>
+<pre>[主要アウトカム名]
+  介入群: a/N1 (○.○%)
+  対照群: c/N2 (○.○%)
+  効果指標: RR（またはHR・OR） ○.○○（95%CI ○.○○–○.○○）, p=○.○○
+  絶対差(ARR): ○.○%   →   NNT: 約○○</pre>
+        <div class="block-label"><span class="ico">📊</span>1つ1つの指標が何を意味するか</div>
+        <table>
+          <thead><tr><th>指標</th><th>読み方</th><th>見るポイント</th><th>キーワード</th></tr></thead>
+          <tbody>
+            <tr><td><strong>イベント率</strong> (n/N, %)</td><td>各群で何人中何人にイベントが起きたか</td><td>まず生の人数を見る。%だけだと規模感を見失う</td><td></td></tr>
+            <tr><td><strong>RR / HR / OR</strong>（相対指標）</td><td>対照群を1としたときの相対的な起こりやすさ</td><td><strong>1より小さい=減少、1より大きい=増加</strong></td><td><button class="kw">hazard ratio</button> <button class="kw">relative risk</button> <button class="kw">odds ratio</button></td></tr>
+            <tr><td><strong>ARR</strong>（絶対指標）</td><td>2群のイベント率の差（％ポイント）</td><td>実際にどれだけ得したかの大きさ</td><td></td></tr>
+            <tr><td><strong>NNT</strong></td><td>1人余分に救うのに必要な治療人数 = 100 ÷ ARR(%)</td><td>小さいほど効果が大きい</td><td></td></tr>
+            <tr><td><strong>95%CI</strong></td><td>真の値がこの範囲にありそう、という幅</td><td>幅が狭い=精度高い。<strong>帰無値をまたぐか</strong>が鍵</td><td><button class="kw">95% CI</button> <button class="kw">confidence interval</button></td></tr>
+            <tr><td><strong>p値</strong></td><td>偶然だけで説明できる確率</td><td>p&lt;0.05で「統計的に有意」</td><td><button class="kw">P =</button> <button class="kw">P&lt;</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step4 -->
+  <section id="step4">
+    <div class="card step">
+      <div class="step-card-head">
+        <span class="step-badge">STEP 4</span>
+        <h3>自分の患者に使えるか（臨床適用）</h3>
+      </div>
+      <div class="card-body">
+        <div class="block-label"><span class="ico">✅</span>やること</div>
+        <ul>
+          <li>試験の対象患者と、自分が診る患者は似ているか考える。 <button class="kw">generalizability</button><button class="kw">external validity</button><button class="kw">subgroup</button><button class="kw">interaction</button></li>
+          <li>ガイドラインや既存の有名な試験（ランドマーク試験）と比べてどうか。 <button class="kw">guideline</button><button class="kw">recommendation</button></li>
+          <li>著者が挙げるLimitationsを確認する。 <button class="kw">limitation</button></li>
+          <li>立場を1つ選ぶ：<strong>すぐ使う / 条件付きで使う / 現時点では慎重 / 研究段階</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step5 -->
+  <section id="step5">
+    <div class="card step">
+      <div class="step-card-head">
+        <span class="step-badge">STEP 5</span>
+        <h3>まとめと問いの準備（発表用）</h3>
+      </div>
+      <div class="card-body">
+        <div class="block-label"><span class="ico">✅</span>やること</div>
+        <ul>
+          <li>Take-home message を1〜2文で自分の言葉で書く（著者の結論のコピーはNG）。 <button class="kw">conclusion</button><button class="kw">in conclusion</button><button class="kw">we conclude</button><button class="kw">interpretation</button></li>
+          <li>ディスカッションの問いを2〜3個用意する。 <button class="kw">clinical implication</button><button class="kw">future research</button><button class="kw">further studies</button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Keywords -->
+  <section id="keywords">
+    <h2 class="sec">キーワード早見表（略語 ⇄ 正式名称）</h2>
+    <div class="card">
+      <div class="card-body">
+      <p class="muted">検索や読解で迷ったときの参照用。下のボックスで絞り込みできます。</p>
+      <input class="search" id="kwSearch" type="text" placeholder="🔍 略語・英語・日本語で絞り込み（例: HR / hazard / 信頼区間）">
+
+      <div class="sub-h">研究デザイン</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>日本語</th></tr></thead>
+        <tbody>
+          <tr><td>RCT</td><td>Randomized Controlled Trial</td><td>ランダム化比較試験</td></tr>
+          <tr><td>—</td><td>Cohort Study</td><td>コホート研究</td></tr>
+          <tr><td>—</td><td>Case-Control Study</td><td>症例対照研究</td></tr>
+          <tr><td>—</td><td>Cross-sectional Study</td><td>横断研究</td></tr>
+          <tr><td>MA</td><td>Meta-analysis</td><td>メタ解析</td></tr>
+          <tr><td>SR</td><td>Systematic Review</td><td>システマティックレビュー</td></tr>
+          <tr><td>—</td><td>Superiority / Non-inferiority / Equivalence</td><td>優越性 / 非劣性 / 同等性</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h">解析・割付け</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>日本語</th></tr></thead>
+        <tbody>
+          <tr><td>ITT</td><td>Intention-To-Treat</td><td>治療企図解析</td></tr>
+          <tr><td>mITT</td><td>modified Intention-To-Treat</td><td>修正ITT解析</td></tr>
+          <tr><td>PP</td><td>Per-Protocol</td><td>プロトコル遵守解析</td></tr>
+          <tr><td>—</td><td>As-treated</td><td>実治療解析</td></tr>
+          <tr><td>—</td><td>Allocation Concealment</td><td>割付けの隠蔽</td></tr>
+          <tr><td>—</td><td>Blinding (single/double/triple)</td><td>盲検化（単/二重/三重）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h">効果指標・統計</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>日本語</th></tr></thead>
+        <tbody>
+          <tr><td>RR</td><td>Relative Risk / Risk Ratio</td><td>相対リスク</td></tr>
+          <tr><td>RRR</td><td>Relative Risk Reduction</td><td>相対リスク減少</td></tr>
+          <tr><td>ARR</td><td>Absolute Risk Reduction</td><td>絶対リスク減少</td></tr>
+          <tr><td>OR</td><td>Odds Ratio</td><td>オッズ比</td></tr>
+          <tr><td>HR</td><td>Hazard Ratio</td><td>ハザード比</td></tr>
+          <tr><td>NNT</td><td>Number Needed to Treat</td><td>治療必要数</td></tr>
+          <tr><td>NNH</td><td>Number Needed to Harm</td><td>有害必要数</td></tr>
+          <tr><td>CI</td><td>Confidence Interval</td><td>信頼区間</td></tr>
+          <tr><td>SD</td><td>Standard Deviation</td><td>標準偏差</td></tr>
+          <tr><td>IQR</td><td>Interquartile Range</td><td>四分位範囲</td></tr>
+          <tr><td>SMD</td><td>Standardized Mean Difference</td><td>標準化平均差</td></tr>
+          <tr><td>p</td><td>p-value</td><td>p値</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h">アウトカム・バイアス</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>日本語</th></tr></thead>
+        <tbody>
+          <tr><td>—</td><td>Primary / Secondary Outcome</td><td>主要 / 副次アウトカム</td></tr>
+          <tr><td>—</td><td>Composite Outcome</td><td>複合アウトカム</td></tr>
+          <tr><td>—</td><td>Surrogate Outcome</td><td>代理アウトカム</td></tr>
+          <tr><td>—</td><td>Hard / Soft Endpoint</td><td>ハード / ソフトエンドポイント</td></tr>
+          <tr><td>—</td><td>Selection Bias</td><td>選択バイアス</td></tr>
+          <tr><td>—</td><td>Performance Bias</td><td>実行バイアス</td></tr>
+          <tr><td>—</td><td>Detection Bias</td><td>検出バイアス</td></tr>
+          <tr><td>—</td><td>Confounding</td><td>交絡</td></tr>
+          <tr><td>—</td><td>Adjudication</td><td>（アウトカムの）中央判定</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h">報告ガイドライン（研究の質チェック用）</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>対象</th></tr></thead>
+        <tbody>
+          <tr><td>CONSORT</td><td>Consolidated Standards of Reporting Trials</td><td>RCT</td></tr>
+          <tr><td>STROBE</td><td>Strengthening the Reporting of Observational Studies in Epidemiology</td><td>観察研究</td></tr>
+          <tr><td>PRISMA</td><td>Preferred Reporting Items for Systematic reviews and Meta-Analyses</td><td>SR/メタ解析</td></tr>
+          <tr><td>QUADAS-2</td><td>Quality Assessment of Diagnostic Accuracy Studies 2</td><td>診断精度研究</td></tr>
+          <tr><td>GRADE</td><td>Grading of Recommendations Assessment, Development and Evaluation</td><td>エビデンスの確実性評価</td></tr>
+          <tr><td>SAP</td><td>Statistical Analysis Plan</td><td>統計解析計画書</td></tr>
+        </tbody>
+      </table>
+
+      <div class="sub-h">統計手法（Methodsで出てくる用語）</div>
+      <table class="kwtable">
+        <thead><tr><th>略語</th><th>正式名称（英）</th><th>日本語</th></tr></thead>
+        <tbody>
+          <tr><td>—</td><td>Kaplan–Meier</td><td>カプランマイヤー（生存曲線）</td></tr>
+          <tr><td>—</td><td>Log-rank test</td><td>ログランク検定</td></tr>
+          <tr><td>—</td><td>Cox regression</td><td>Cox回帰</td></tr>
+          <tr><td>ANOVA</td><td>Analysis of Variance</td><td>分散分析</td></tr>
+          <tr><td>—</td><td>Logistic regression</td><td>ロジスティック回帰</td></tr>
+          <tr><td>MICE</td><td>Multiple Imputation by Chained Equations</td><td>多重代入法</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" id="noHit" style="display:none;">該当する用語が見つかりませんでした。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Checklist -->
+  <section id="checklist">
+    <h2 class="sec">最低限チェックリスト（発表前）</h2>
+    <div class="card">
+      <div class="card-body">
+        <ul class="todo">
+          <li><span class="box"></span>PICOを臨床の言葉で1文で言える</li>
+          <li><span class="box"></span>主要アウトカムの数字（RR・95%CI・ARR・NNT）を書き出した</li>
+          <li><span class="box"></span>「統計的有意」と「臨床的意味」を分けて説明できる</li>
+          <li><span class="box"></span>Limitations を3つ挙げられる</li>
+          <li><span class="box"></span>「明日この患者に使うか」の立場を決めた</li>
+          <li><span class="box"></span>わからない用語は早見表で潰した</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button id="top-btn" title="トップへ戻る">↑</button>
+<div class="toast" id="toast">コピーしました</div>
+
+<script>
+  // チェックリスト：クリックで✓トグル
+  document.querySelectorAll('ul.todo li').forEach(function(li){
+    li.addEventListener('click', function(){
+      li.classList.toggle('done');
+      var box = li.querySelector('.box');
+      box.textContent = li.classList.contains('done') ? '✓' : '';
+    });
+  });
+
+  // キーワード：クリックでコピー
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1400);
+  }
+  document.querySelectorAll('.kw').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.textContent;
+      var done = function(){
+        btn.classList.add('copied');
+        showToast('コピー: ' + text);
+        setTimeout(function(){ btn.classList.remove('copied'); }, 900);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); });
+      } else { fallbackCopy(text); done(); }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  // 用語早見表：絞り込み
+  var search = document.getElementById('kwSearch');
+  var noHit = document.getElementById('noHit');
+  search.addEventListener('input', function(){
+    var q = search.value.trim().toLowerCase();
+    var anyHit = false;
+    document.querySelectorAll('table.kwtable tbody tr').forEach(function(tr){
+      var hit = tr.textContent.toLowerCase().indexOf(q) !== -1;
+      tr.classList.toggle('hide', !hit);
+      if(hit) anyHit = true;
+    });
+    // 見出し・テーブルの表示制御（行が全て隠れたテーブルは見出しごと隠す）
+    document.querySelectorAll('table.kwtable').forEach(function(tbl){
+      var visible = tbl.querySelectorAll('tbody tr:not(.hide)').length;
+      var head = tbl.previousElementSibling; // sub-h
+      tbl.style.display = visible ? '' : 'none';
+      if(head && head.classList.contains('sub-h')) head.style.display = visible ? '' : 'none';
+    });
+    noHit.style.display = (q && !anyHit) ? 'block' : 'none';
+  });
+
+  // トップへ戻るボタン
+  var topBtn = document.getElementById('top-btn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 400);
+  });
+  topBtn.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+</script>
+
+</body>
+</html>
